@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Shoot</title>
+</head>
+<script src="simpleGame.js"></script>
+<script>
+    var scene;
+    var thank;
+    var bg;
+    var missile;
+    var bird = new Array(2);
+
+    function init() {
+        scene = new Scene();
+        scene.setSize(1910, 900);
+        bg = new BackGround();
+        thank = new Thank();
+        missile = new Missile();
+        createBird();
+        scene.start();
+    }
+
+    function update() {
+        scene.clear();
+        tthank.checkKeys();
+        bg.update();
+        thank.update();
+        missile.update();
+        for (i = 0; i < 2; i++) {
+            bird[i].update();
+        }
+    }
+
+    function createBird() {
+        for (i = 0; i < 2; i++) {
+            bird[i] = new Bird();
+        }
+    }
+
+    function Bird() {
+        tbird = new Sprite(scene, "bird.png", 882, 80);
+        tbird.loadAnimation(882, 80, 98, 80);
+        tbird.generateAnimationCycles();
+        tbird.renameCycles(new Array("fly"));
+        tbird.setAnimationSpeed(1000);
+
+        // tbird.setPosition(500, 200);
+        tbird.setSpeed(10);
+        // tbird.pauseAnimation();
+        tbird.setCurrentCycle("fly");
+
+        tbird.reset = function() {
+            newX = Math.random() * this.cWidth;
+            newY = Math.random() * this.cHeight;
+            this.setPosition(newX, newY);
+        }
+
+        tbird.reset();
+
+        return tbird;
+    }
+
+    function Thank() {
+        tthank = new Sprite(scene, "thank.png", 100, 100);
+        tthank.setPosition(900, 890);
+        tthank.imagAngle = 90;
+        tthank.setSpeed(0);
+
+        tthank.checkKeys = function() {
+            if (keysDown[K_LEFT]) {
+                this.turnBy(-5);
+            }
+            if (keysDown[K_RIGHT]) {
+                this.turnBy(5);
+            }
+            if (keysDown[K_SPACE]) {
+                missile.fire();
+            }
+
+        }
+
+        return tthank;
+    }
+
+    function BackGround() {
+        tbg = new Sprite(scene, "skyTree.png", 1920, 1080);
+        tbg.setSpeed(0);
+        tbg.setPosition(950, 360);
+
+        return tbg;
+    }
+
+    function Missile() {
+        tmissile = new Sprite(scene, "missile.png", 30, 20);
+        tmissile.hide();
+
+        tmissile.fire = function() {
+            this.show();
+            this.setPosition(thank.x, thank.y);
+            this.setAngle(thank.getImgAngle() - 90);
+            this.setSpeed(100);
+            this.setBoundAction(DIE);
+            this.setImage("missile.png");
+        }
+
+        return tmissile;
+    }
+</script>
+
+<body onload="init()">
+
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>Drag</title>
+    <script type = "text/javascript"
+            src = "simpleGame.js"></script>
+    <script type="text/javascript">
+    var game;
+    var car;
+    
+    function Car(){
+        tCar = new Sprite(game, "car.png", 100, 50);
+        
+        tCar.checkKeys = function(){
+            console.log(this.speed);
+            if (keysDown[K_LEFT]){
+                this.changeAngleBy(-5);
+            }
+            
+            if (keysDown[K_RIGHT]){
+                this.changeAngleBy(5);
+            }
+            
+            if (keysDown[K_UP]){
+                this.addVector(this.getImgAngle(), 2);
+            }
+            //this.addVector(this.getImgAngle(), (this.speed / 20));
+        } // end checkKeys
+        
+        tCar.checkDrag = function(){            
+            speed = this.getSpeed();
+            speed *= .95;
+            this.setSpeed(speed);
+        }
+        return tCar;
+    }
+    
+    function init(){
+        game = new Scene();
+        game.setBG("#666666");
+        car = new Car();
+        game.start();
+    } // end init
+    
+    function update(){
+        game.clear();
+        
+        car.checkKeys();
+        car.checkDrag();
+        car.update();
+    }
+    
+    
+    </script>
+    
+</head>
+<body onload = "init()">
+    
+</body>
+</html>

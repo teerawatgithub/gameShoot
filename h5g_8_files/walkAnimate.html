@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>missle.html</title>
+    <script type="text/javascript"
+            src = "simpleGame.js"></script>
+    <script type="text/javascript">
+    var scenc;
+    var bg;
+    var cartoon;
+    
+    function init(){
+        scenc = new Scene();
+        bg = new Sprite(scenc, "rpgMap.png", 800, 600);
+        bg.setSpeed(0);
+        bg.setPosition(400, 300);
+
+        cartoon = new Sprite(scenc, "rpg_sprite_walk.png", 192, 128);
+        cartoon.loadAnimation(192, 128, 24, 32);
+        cartoon.generateAnimationCycles();
+        cartoon.renameCycles(new Array("down", "up", "left", "right"));
+        cartoon.setAnimationSpeed(500);
+
+        cartoon.setPosition(440, 380);
+        cartoon.setSpeed(0);
+        cartoon.pauseAnimation();
+        cartoon.setCurrentCycle("down");
+
+        scenc.start();
+    } // end init
+
+    function checkKey(){
+
+        if(keysDown[K_LEFT])
+        {
+            cartoon.playAnimation();
+            cartoon.setCurrentCycle("left");
+            cartoon.setSpeed(1);
+            cartoon.setMoveAngle(270);
+        }
+
+        if(keysDown[K_RIGHT])
+        {
+            cartoon.playAnimation();
+            cartoon.setCurrentCycle("right");
+            cartoon.setSpeed(1);
+            cartoon.setMoveAngle(90);
+        }
+
+        if(keysDown[K_UP])
+        {
+            cartoon.playAnimation();
+            cartoon.setCurrentCycle("up");
+            cartoon.setSpeed(1);
+            cartoon.setMoveAngle(360);
+        }
+
+        if(keysDown[K_DOWN])
+        {
+            cartoon.playAnimation();
+            cartoon.setCurrentCycle("down");
+            cartoon.setSpeed(1);
+            cartoon.setMoveAngle(180);
+        }
+
+        if(keysDown[K_SPACE])
+        {
+            cartoon.playAnimation();
+            cartoon.setCurrentCycle("down");
+            cartoon.pauseAnimation();
+            cartoon.setSpeed(0);
+            cartoon.setMoveAngle(180);
+        }
+    }
+
+    function update(){
+        scenc.clear();
+        
+        checkKey();
+        
+
+        bg.update();
+        cartoon.update();
+    } // end update
+    
+    </script>
+</head>
+<body onload = "init()">
+    
+</body>
+</html>
