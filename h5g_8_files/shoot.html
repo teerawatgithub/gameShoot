@@ -17,6 +17,7 @@
     var missile;
     var jet = [];
     var bom = [];
+    var jetNum = 5;
     
 
     function init() {
@@ -42,8 +43,12 @@
             jet[i].update();
             bom[i].update();
         }
+        
+        // console.log(hpUI);
 
     }
+
+    
 </script>
 
 <body>
@@ -52,7 +57,9 @@
         <li> [HP: <span id="hp">3</span>] [PlaneBot: <span id="bot"> </span>]</li>
         <li><button onclick="startGame()" id="btn">Play</button></li>
         <li>score: <span id="score">0</span></li>
+        
     </ul>
+    <p id="test">0</p>
 </body>
 
 </html>
