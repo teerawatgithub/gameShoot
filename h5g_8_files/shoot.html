@@ -16,6 +16,8 @@
     var bg;
     var missile;
     var jet = [];
+    var bom = [];
+    
 
     function init() {
         scene = new Scene();
@@ -23,7 +25,9 @@
         bg = new BackGround();
         thank = new Thank();
         missile = new Missile();
+        // bom = new Bom();
         createJet();
+        bomSound = new Sound("bomSound.mp3");
         scene.start();
     }
 
@@ -33,9 +37,12 @@
         bg.update();
         thank.update();
         missile.update();
-        for(i=0; i<jetNum; i++){
+        for (i = 0; i < jetNum; i++) {
+            checkCollision(i);
             jet[i].update();
+            bom[i].update();
         }
+
     }
 </script>
 

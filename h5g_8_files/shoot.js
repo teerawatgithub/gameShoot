@@ -1,8 +1,17 @@
 var jetNum = 5;
+var checkBomDIE = -1;
+var thankHP = 3;
+var score = "100";
+var scoreUI = document.getElementById('score');
+var hpUI = document.getElementById('hp');
+var botUI = document.getElementById('bot');
+
+
 
 function createJet() {
     for (i = 0; i < jetNum; i++) {
         jet[i] = new Jet();
+        bom[i] = new Bom(i);
     }
 }
 
@@ -22,6 +31,7 @@ function Jet() {
     tjet.setSpeed(15);
 
     tjet.reset = function () {
+        newX = Math.random() * this.cWidth;
         newY = Math.random() * this.cHeight;
         while (newY >= 550) {
             newY = Math.random() * this.cHeight;
@@ -29,25 +39,35 @@ function Jet() {
         this.setPosition(newX, newY);
     }
 
-    tjet.bomber = function () {
+    tjet.reset();
+
+    return tjet;
+}
+
+function Bom(i) {
+    tbom = new Sprite(scene, "bom.png", 30, 60)
+    tbom.hide();
+
+    tbom.startBomber = function (a) {
         var x = setInterval(function () {
-            var ran = parseInt(Math.random() * 100);
-            console.log(ran);
-            if (ran >= 15 && ran <= 50) {
-                tBom = new Sprite(scene, "F01L.png", 50, 50)
-                tBom.setSpeed(10);
-                tBom.setMoveAngle(180);
-                // tBom.setBoundAction(DIE);
-                tBom.setPosition(this.x, this.y);
+            if (checkBomDIE == a) {
+                console.log();
                 clearInterval(x);
+            }
+            var ran = parseInt(Math.random() * 100);
+            if (ran >= 90 && ran <= 100) {
+                bom[a].show();
+                bom[a].setSpeed(10);
+                bom[a].setMoveAngle(180);
+                bom[a].setBoundAction(DIE);
+                bom[a].setPosition(jet[a].x, jet[a].y);
             }
         }, 1000);
     }
 
-    tjet.reset();
-    tjet.bomber();
+    tbom.startBomber(i);
 
-    return tjet;
+    return tbom;
 }
 
 function Thank() {
@@ -55,6 +75,8 @@ function Thank() {
     tthank.setPosition(900, 890);
     tthank.imagAngle = 90;
     tthank.setSpeed(0);
+    tthank.maxSpeed = 10;
+    tthank.minSpeed = -10;
 
     tthank.checkKeys = function () {
         if (keysDown[K_LEFT]) {
@@ -66,7 +88,16 @@ function Thank() {
         if (keysDown[K_SPACE]) {
             missile.fire();
         }
-
+        if (keysDown[K_UP]) {
+            this.changeSpeedBy(1);
+            if (this.speed > this.maxSpeed)
+                this.setSpeed(this.maxSpeed);
+        }
+        if (keysDown[K_DOWN]) {
+            this.changeSpeedBy(-1);
+            if (this.speed < this.minSpeed)
+                this.setSpeed(this.minSpeed);
+        }
     }
 
     return tthank;
@@ -96,12 +127,34 @@ function Missile() {
     return tmissile;
 }
 
+function checkCollision(index) {
+    if (missile.collidesWith(jet[index])) {
+        bomSound.play();
+        jet[index].hide();
+        checkBomDIE = index;
+        score++;
+        // updateScore();
+    }
+    if (bom[index].collidesWith(thank)) {
+        thankHP--;
+        if (thankHP == 0) {
+            console.log(thankHP)
+            alert("Game Over");
+        }
+
+        console.log(thankHP)
+        bom[index].hide();
+        // hpUI.innerHTML = `${thankHP}`;
+       
+
+    }
+}
+
 function startGame() {
 
     // var timer = 60;
-    var btnStart = document.getElementById("btn");
-    var scoreUI = document.getElementById('score');
     // timeBoard = document.getElementById("time");
+    var btnStart = document.getElementById("btn");
 
     // score = 0;
     IsPlaying = true;
