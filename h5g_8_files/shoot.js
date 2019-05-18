@@ -2,7 +2,6 @@ var checkBomDIE = -1;
 var thankHP = 3;
 var score = 0;
 var scoreUI = document.getElementById('score');
-
 var botUI = document.getElementById('bot');
 
 
@@ -36,6 +35,18 @@ function Jet() {
             newY = Math.random() * this.cHeight;
         }
         this.setPosition(newX, newY);
+    }
+
+    tjet.die = function (){
+        // this.setPosition(0, 1080);
+        // this.hide();
+        newX = Math.random() * this.cWidth;
+        newY = Math.random() * this.cHeight;
+        while (newY >= 550) {
+            newY = Math.random() * this.cHeight;
+        }
+        this.setPosition(newX, newY);
+        this.setSpeed(0);
     }
 
     tjet.reset();
@@ -127,6 +138,7 @@ function Missile() {
     }
 
     tmissile.hidee = function () {
+        
         this.hide();
     }
 
@@ -141,13 +153,18 @@ function checkCollision(index) {
         console.log(index);
         missile.hide();
         bomSound.play();
-        jet[index].hide();
+        jet[index].die();
         //stopBom
         checkBomDIE = index;
         score += 100;
         jetNum--;
         tjetNum.innerHTML = `${jetNum}`;
         tscore.innerHTML = `${score}`;
+        if(jetNum == 0){
+            alert("Next level");
+            jetNum += 10;
+            init();
+        }
         // updateScore();
     }
     if (bom[index].collidesWith(thank)) {
@@ -160,8 +177,6 @@ function checkCollision(index) {
         }
         tthankHP.innerHTML = `${thankHP}`;
         bom[index].hide();
-
-
     }
 }
 
