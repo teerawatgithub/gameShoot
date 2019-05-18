@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Game</title>
+    <link rel="stylesheet" href="game.css">
+    <script src="simpleGame.js"></script>
+    <script type="text/javascript" src="game.js"></script>
+    <script>
+        var scene;
+        var leaves;
+        var frog;
+        var flies;
+        var visvisMP3;
+        var NUMFLIES = 15;
+        var test;
+        
+
+        function Leaves() {
+            leaves = new Sprite(scene, "bg.png", 852, 480);
+
+            leaves.setSpeed(0);
+
+            return leaves;
+        }
+
+        function init() {
+
+            if (!test)
+                scene = new Scene();
+            scene.setSize(625, 420);
+            
+
+            // fly = new Sprite(scene, "fly.png", 30, 30);
+            // fly.setSpeed(0);
+            // fly.setAngle(270);
+
+            setUpFlies();
+
+
+            leaves = new Leaves();
+
+            frog = new Frog();
+
+            visvisMP3 = new Sound("visvis.mp3");
+
+            scene.start();
+        } // end init
+
+        function update() {
+            scene.clear();
+
+            //handle events here
+
+            // setTimeout(() => {
+            //     car.setAngle(90)
+            // }, 10000);
+            // fly.wriggle();
+            frog.moveKeys();
+            //checkCollision();
+
+            //update all the sprites
+            leaves.update();
+
+            for (i = 0; i < NUMFLIES; i++) {
+                flies[i].wriggle();
+                checkCollision(i);
+                flies[i].update();
+            }
+
+            frog.update();
+
+            if (!IsPlaying) {
+                btn.removeAttribute('disabled');
+                test = true;
+                scene.stop();
+                return;
+            }
+
+        }
+
+        function checkCollision(flyNum) {
+            if (frog.collidesWith(flies[flyNum])) {
+
+                visvisMP3.play();
+                flies[flyNum].checkScore();
+                flies[flyNum].changeThis();
+                flies[flyNum].reset();
+
+            }
+        }
+
+        function setUpFlies() {
+            flies = new Array(NUMFLIES);
+            for (i = 0; i < NUMFLIES; i++) {
+                flies[i] = new Fly();
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1 id="head" align="center"></h1>
+    <ul id="scoreboard">
+        <li>Time Left: <span id="time">60</span></li>
+        <li><button onclick="startGame()" id="btn">Play</button></li>
+        <li>score: <span id="score">0</span></li>
+    </ul>
+</body>
+
+</html>

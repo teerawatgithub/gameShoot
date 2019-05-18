@@ -18,10 +18,17 @@
     var jet = [];
     var bom = [];
     var jetNum = 5;
-    
+    var checkBomDIE = -1;
+    var thankHP = 3;
+    var score = 0;
+    var firstStart = true;
+    var level = 5;
 
-    function init() {
-        scene = new Scene();
+
+    function init(boolean) {
+        tjetNum = document.getElementById("bot").innerHTML = `${jetNum}`;
+        if (boolean)
+            scene = new Scene();
         scene.setSize(1910, 900);
         bg = new BackGround();
         thank = new Thank();
@@ -38,28 +45,32 @@
         bg.update();
         thank.update();
         missile.update();
-        for (i = 0; i < jetNum; i++) {
-            checkCollision(i);
+
+        for (i = 0; i < jet.length; i++) {
+            bom[i].startBomber(i);
+            if (checkCollision(i)) {
+                scene.stop();
+                console.log("break");
+                break;
+            }
             jet[i].update();
             bom[i].update();
+
         }
-        
+
         // console.log(hpUI);
 
     }
-
-    
 </script>
 
-<body>
+<body style="text-align: center">
     <h1 id="head" align="center"></h1>
     <ul id="scoreboard">
         <li> [HP: <span id="hp">3</span>] [PlaneBot: <span id="bot"> </span>]</li>
         <li><button onclick="startGame()" id="btn">Play</button></li>
-        <li>score: <span id="score">-1 </span></li>
-        
+        <li>score: <span id="score">0</span></li>
+
     </ul>
-    <p id="test">0</p>
 </body>
 
 </html>

@@ -1,15 +1,8 @@
-var checkBomDIE = -1;
-var thankHP = 3;
-var score = 0;
-var scoreUI = document.getElementById('score');
-var botUI = document.getElementById('bot');
-
-
-
 function createJet() {
     for (i = 0; i < jetNum; i++) {
         jet[i] = new Jet();
         bom[i] = new Bom(i);
+        bom[i].startBomber(i);
     }
 }
 
@@ -28,7 +21,7 @@ function Jet() {
     }
     tjet.setSpeed(15);
 
-    tjet.reset = function () {
+    tjet.reset = function() {
         newX = Math.random() * this.cWidth;
         newY = Math.random() * this.cHeight;
         while (newY >= 550) {
@@ -37,17 +30,17 @@ function Jet() {
         this.setPosition(newX, newY);
     }
 
-    tjet.die = function (){
-        // this.setPosition(0, 1080);
-        // this.hide();
-        newX = Math.random() * this.cWidth;
-        newY = Math.random() * this.cHeight;
-        while (newY >= 550) {
-            newY = Math.random() * this.cHeight;
-        }
-        this.setPosition(newX, newY);
-        this.setSpeed(0);
-    }
+    // tjet.die = function() {
+    //     // this.setPosition(0, 1080);
+    //     // this.hide();
+    //     newX = Math.random() * this.cWidth;
+    //     newY = Math.random() * this.cHeight;
+    //     while (newY >= 550) {
+    //         newY = Math.random() * this.cHeight;
+    //     }
+    //     this.setPosition(newX, newY);
+    //     this.setSpeed(0);
+    // }
 
     tjet.reset();
 
@@ -58,23 +51,16 @@ function Bom(i) {
     tbom = new Sprite(scene, "bom.png", 30, 60)
     tbom.hide();
 
-    tbom.startBomber = function (a) {
-        var x = setInterval(function () {
-            if (checkBomDIE == a) {
-                clearInterval(x);
-            }
-            var ran = parseInt(Math.random() * 100);
-            if (ran >= 90 && ran <= 100) {
-                bom[a].show();
-                bom[a].setSpeed(10);
-                bom[a].setMoveAngle(180);
-                bom[a].setBoundAction(DIE);
-                bom[a].setPosition(jet[a].x, jet[a].y);
-            }
-        }, 1000);
+    tbom.startBomber = function(index) {
+        var ran = parseInt(Math.random() * 100);
+        if (ran >= 99 && ran <= 100 && !this.visible) {
+            this.visible = true;
+            this.setSpeed(10);
+            this.setMoveAngle(180);
+            this.setBoundAction(DIE);
+            this.setPosition(jet[index].x, jet[index].y);
+        }
     }
-
-    tbom.startBomber(i);
 
     return tbom;
 }
@@ -87,7 +73,7 @@ function Thank() {
     tthank.maxSpeed = 10;
     tthank.minSpeed = -10;
 
-    tthank.checkKeys = function () {
+    tthank.checkKeys = function() {
         if (keysDown[K_LEFT]) {
             this.turnBy(-5);
         }
@@ -97,19 +83,19 @@ function Thank() {
         if (keysDown[K_SPACE]) {
             missile.fire();
         }
-        if (keysDown[K_UP]) {
-            this.changeSpeedBy(1);
-            if (this.speed > this.maxSpeed)
-                this.setSpeed(this.maxSpeed);
-        }
-        if (keysDown[K_DOWN]) {
-            this.changeSpeedBy(-1);
-            if (this.speed < this.minSpeed)
-                this.setSpeed(this.minSpeed);
-        }
+        // if (keysDown[K_UP]) {
+        //     this.changeSpeedBy(1);
+        //     if (this.speed > this.maxSpeed)
+        //         this.setSpeed(this.maxSpeed);
+        // }
+        // if (keysDown[K_DOWN]) {
+        //     this.changeSpeedBy(-1);
+        //     if (this.speed < this.minSpeed)
+        //         this.setSpeed(this.minSpeed);
+        // }
     }
 
-    tthank.checkScore = function () {
+    tthank.checkScore = function() {
 
     }
 
@@ -128,7 +114,7 @@ function Missile() {
     tmissile = new Sprite(scene, "missile.png", 30, 20);
     tmissile.hide();
 
-    tmissile.fire = function () {
+    tmissile.fire = function() {
         this.show();
         this.setPosition(thank.x, thank.y);
         this.setAngle(thank.getImgAngle() - 90);
@@ -137,47 +123,69 @@ function Missile() {
         this.setImage("missile.png");
     }
 
-    tmissile.hidee = function () {
-        
+    tmissile.reset = function() {
+        this.setPosition(thank.x, thank.y);
+        this.setSpeed(0);
         this.hide();
     }
+
 
     return tmissile;
 }
 
 function checkCollision(index) {
-    tthankHP = document.getElementById("hp");
+    thankHPUI = document.getElementById("hp");
     tjetNum = document.getElementById("bot");
     tscore = document.getElementById("score");
+    btnStart = document.getElementById("btn");
     if (missile.collidesWith(jet[index])) {
-        console.log(index);
-        missile.hide();
+        //hide every thing
+        missile.reset();
         bomSound.play();
-        jet[index].die();
+        jet.splice(index, 1);
+        bom.splice(index, 1);
+        console.log(jet);
+        console.log(bom);
+
         //stopBom
-        checkBomDIE = index;
+        // checkBomDIE = index;
+        //update value
         score += 100;
         jetNum--;
+
+        //update ui
         tjetNum.innerHTML = `${jetNum}`;
         tscore.innerHTML = `${score}`;
-        if(jetNum == 0){
+
+        //Next level
+        if (jetNum == 0) {
+            level += 5;
+            jetNum = level;
+            btnStart.removeAttribute('disabled');
             alert("Next level");
-            jetNum += 10;
-            init();
+            firstStart = false;
+            return true;
         }
-        // updateScore();
     }
-    if (bom[index].collidesWith(thank)) {
+    if (thank.collidesWith(bom[index])) {
         thankHP--;
         if (thankHP == 0) {
-            console.log(thankHP)
-            tthankHP.innerHTML = `${thankHP}`;
             bom[index].hide();
+            thankHPUI.innerHTML = `${thankHP}`;
+            level = 5;
+            jetNum = level;
+            thankHP = 3;
+            btnStart.removeAttribute('disabled');
             alert("Game Over");
+            thankHPUI.innerHTML = `${thankHP}`;
+            firstStart = false;
+            return true;
+        } else {
+            bom[index].hide();
+            thankHPUI.innerHTML = `${thankHP}`;
         }
-        tthankHP.innerHTML = `${thankHP}`;
-        bom[index].hide();
     }
+    return false;
 }
 
 function startGame() {
@@ -192,9 +200,9 @@ function startGame() {
 
 
     btnStart.disabled = "disabled"
-    // ranHeadJa(1, 6);
+        // ranHeadJa(1, 6);
 
-    init();
+    init(firstStart);
 
     // var x = setInterval(function () {
     //     timer -= 1;
