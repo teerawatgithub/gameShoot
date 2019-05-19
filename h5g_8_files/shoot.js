@@ -144,8 +144,6 @@ function checkCollision(index) {
         bomSound.play();
         jet.splice(index, 1);
         bom.splice(index, 1);
-        console.log(jet);
-        console.log(bom);
 
         //stopBom
         // checkBomDIE = index;
@@ -170,13 +168,15 @@ function checkCollision(index) {
     if (thank.collidesWith(bom[index])) {
         thankHP--;
         if (thankHP == 0) {
-            bom[index].hide();
             thankHPUI.innerHTML = `${thankHP}`;
+            jet.splice(0, level);
+            bom.splice(0, level);
             level = 5;
             jetNum = level;
             thankHP = 3;
             btnStart.removeAttribute('disabled');
             alert("Game Over");
+            alert("Your score are " + score + "!!");
             thankHPUI.innerHTML = `${thankHP}`;
             firstStart = false;
             return true;
